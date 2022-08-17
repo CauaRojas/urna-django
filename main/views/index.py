@@ -18,7 +18,3 @@ def index(request):
 
     }
     return HttpResponse(template.render(context, request))
-
-
-def votar(request):
-    return HttpResponse("You're voting!")
