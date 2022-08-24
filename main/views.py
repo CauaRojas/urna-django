@@ -28,3 +28,11 @@ def cadastro(request):
 
 def votar(request):
     return HttpResponse("You're voting!")
+
+def candidato(request):
+    template = loader.get_template('candidato.html')
+    context = {
+        'candidato': request.GET['candidato'],
+    }
+    return HttpResponse(template.render(context, request))
+    
