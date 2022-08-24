@@ -1,5 +1,4 @@
-from multiprocessing import context
-from django.shortcuts import render
+from re import template
 from django.http import HttpResponse
 from django.template import loader
 
@@ -22,6 +21,10 @@ def index(request):
     return HttpResponse(template.render(context, request))
 
 
+def cadastro(request):
+    template = loader.get_template('cadastro.html')
+    return HttpResponse(template.render())
+
+
 def votar(request):
-    vote = request.GET.get('vote')
-    return HttpResponse(f"{vote}")
+    return HttpResponse("You're voting!")
