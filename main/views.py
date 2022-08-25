@@ -1,5 +1,9 @@
+from django.conf import settings
+import requests
 from django.http import HttpResponse
 from django.template import loader
+from os import path
+
 alunos = {"07340": "Allice Sales da silva",
           "07242": "Cauã Alencar Rojas Romero",
           "07449": "Diogo William da Silva Rodrigues",
@@ -46,7 +50,22 @@ def cadastro(request):
 
 
 def votar(request):
-    return HttpResponse("You're voting!")
+    response = ''
+    rm = request.GET['codigo']
+    voto = request.GET['voto']
+    if rm in alunos.keys():
+        votos = open(path.join(settings.BASE_DIR, 'vote.txt'), 'r')
+        for linha in votos:
+            if rm in linha:
+                response = 'Você já votou!'
+                break
+        votos.close()
+        if response == '':
+            votos = open(path.join(settings.BASE_DIR, 'vote.txt'), 'a')
+            votos.write(rm + voto + '\n')
+            votos.close()
+            response = 'Voto computado!'
+    return HttpResponse(response or 'Aluno não cadastrado!')
 
 
 def candidato(request):
@@ -55,3 +74,13 @@ def candidato(request):
         'candidato': request.GET['candidato'],
     }
     return HttpResponse(template.render(context, request))
+
+
+def computeVotes():
+    votos = open(path.join(settings.BASE_DIR, 'vote.txt'), 'r')
+    votos = votos.readlines()
+    votos = [voto.strip() for voto in votos]
+    votos = set(votos)
+    votos = list(votos)
+    votos.sort()
+    return votos
