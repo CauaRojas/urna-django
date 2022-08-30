@@ -1,5 +1,4 @@
 from django.conf import settings
-import requests
 from django.http import HttpResponse
 from django.template import loader
 from os import path
@@ -31,13 +30,19 @@ def index(request):
     context = {
         'candidatos': [
             {
-                'name': 'John Doe',
+                'name': 'Juliette BBB',
+                'descricao': 'Mulher, Cantora, Empreendedora, Embaixador, Empoderada, Paraibana, LGBTQIA+, lutando pelo direitos de todos. Cuscuz salva vidas!',
+                'img': "https://s2.glbimg.com/WU3jadMzNrZMZyqLK24Ej-eV-7k=/0x0:1500x1500/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2021/K/3/ztZD9BQ06ifX4IAv46nA/juliette-chapeu.jpg"
             },
             {
-                'name': 'Jane Doe',
+                'name': 'Francisco Pio',
+                'descricao': 'Professor, Assoviador, amo soninhos e já fui denunciado por piadas mal compreendidas. Luto pela comunidade escolar!',
+                'img': 'https://i.imgur.com/DMexgbj.jpg'
             },
             {
-                'name': 'Joe Doe',
+                'name': 'Paulo Muzy',
+                'descricao': 'Maromba, peitudo, amo e vivo pela robertinha, vulgo minha vida, Lives matinais são a minha paixão, Vou lutar pela comunidade marombeira. Amo Creatina!',
+                "img": "https://www.pragmatismopolitico.com.br/wp-content/uploads/2022/07/paulo-muzy.png"
             }, ],
 
     }
@@ -51,18 +56,19 @@ def cadastro(request):
 
 def votar(request):
     response = ''
-    rm = request.GET['codigo']
-    voto = request.GET['voto']
+    rm = request.GET['rm']
+    voto = request.GET['vote']
     if rm in alunos.keys():
-        votos = open(path.join(settings.BASE_DIR, 'vote.txt'), 'r')
+        votosFile = open(path.join(settings.BASE_DIR, 'vote.txt'), 'r')
+        votos = votosFile.readlines()
         for linha in votos:
             if rm in linha:
                 response = 'Você já votou!'
                 break
-        votos.close()
+        votosFile.close()
         if response == '':
             votos = open(path.join(settings.BASE_DIR, 'vote.txt'), 'a')
-            votos.write(rm + voto + '\n')
+            votos.write(rm + " " + voto + '\n')
             votos.close()
             response = 'Voto computado!'
     return HttpResponse(response or 'Aluno não cadastrado!')
@@ -77,9 +83,10 @@ def candidato(request):
 
 
 def computeVotes():
-    votos = open(path.join(settings.BASE_DIR, 'vote.txt'), 'r')
-    votos = votos.readlines()
-    votos = [voto.strip() for voto in votos]
+    votosFile = open(path.join(settings.BASE_DIR, 'vote.txt'), 'r')
+    votos = votosFile.readlines()
+    votosFile.close()
+    votos = [voto.strip().split(' ')[1] for voto in votos]
     votos = set(votos)
     votos = list(votos)
     votos.sort()

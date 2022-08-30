@@ -12,17 +12,21 @@
             type="image/x-icon"
         />
         <script defer src="{% static 'main/index.js'%}"></script>
-        <title>Document</title>
+        <title>Urna</title>
     </head>
     <body>
-        <h1>Bem vindo a Urna!</h1>
+        <h1>Bem vindo a votação Etec Jaraguá 2022</h1>
         <main>
-            {% for candidato in candidatos %}
-            <div>
-                <p>{{candidato.name}}</p>
-                <button id="{{ forloop.counter }}">VOTAR</button>
+            <div class="candidatos">
+                {% for candidato in candidatos %}
+                <div class="candidato">
+                    <img src="{{candidato.img}}" alt="{{candidato.name}}" />
+                    <h3>{{candidato.name}}</h3>
+                    <p>{{candidato.descricao}}</p>
+                    <button id="{{ forloop.counter }}">VOTAR</button>
+                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
             <button>Cadastrar</button>
         </main>
     </body>
