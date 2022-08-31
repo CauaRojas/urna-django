@@ -54,6 +54,15 @@ def cadastro(request):
     return HttpResponse(template.render())
 
 
+def cadastrar(request):
+    nome, rm = request.GET['nome'], request.GET['codigo']
+    if rm in alunos.keys():
+        return HttpResponse('Aluno já cadastrado!')
+    else:
+        alunos[rm] = nome
+        return HttpResponse('Aluno cadastrado!')
+
+
 def votar(request):
     response = ''
     rm = request.GET['rm']
