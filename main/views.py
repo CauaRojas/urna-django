@@ -1,7 +1,11 @@
+from functools import reduce
 from django.conf import settings
 from django.http import HttpResponse
 from django.template import loader
 from os import path
+from django.shortcuts import redirect
+
+firstTurnEnded = False
 
 alunos = {"07340": "Allice Sales da silva",
           "07242": "Cauã Alencar Rojas Romero",
@@ -10,7 +14,7 @@ alunos = {"07340": "Allice Sales da silva",
           "07277": "Fernando Marques dos Santos",
           "07346": "Gabriel Da Silva Freitas",
           "07520": "Gabriel David Souza do Carmo",
-          "07541": "Gabriel de Moura Nardy Alexandroni",
+          "07514": "Gabriel de Moura Nardy Alexandroni",
           "07371": "Guilherme Pereira Luz",
           "07249": "Gustavo de Oliveira",
           "07361": "Heloiza Oliveira da Silva",
@@ -24,27 +28,28 @@ alunos = {"07340": "Allice Sales da silva",
           "07328": "Richard Barbosa Sanches",
           "07415": "Samuel da Silva Lima"}
 
+candidatos = [
+    {
+        'name': 'Juliette BBB',
+                'descricao': 'Mulher, Cantora, Empreendedora, Embaixador, Empoderada, Paraibana, LGBTQIA+, lutando pelo direitos de todos. Cuscuz salva vidas!',
+                'img': "https://s2.glbimg.com/WU3jadMzNrZMZyqLK24Ej-eV-7k=/0x0:1500x1500/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2021/K/3/ztZD9BQ06ifX4IAv46nA/juliette-chapeu.jpg"
+    },
+    {
+        'name': 'Francisco Pio',
+                'descricao': 'Professor, Assoviador, amo soninhos e já fui denunciado por piadas mal compreendidas. Luto pela comunidade escolar!',
+                'img': 'https://i.imgur.com/DMexgbj.jpg'
+    },
+    {
+        'name': 'Paulo Muzy',
+                'descricao': 'Maromba, peitudo, amo e vivo pela robertinha, vulgo minha vida, Lives matinais são a minha paixão, Vou lutar pela comunidade marombeira. Amo Creatina!',
+                "img": "https://www.pragmatismopolitico.com.br/wp-content/uploads/2022/07/paulo-muzy.png"
+    }, ]
+
 
 def index(request):
     template = loader.get_template('index.html')
     context = {
-        'candidatos': [
-            {
-                'name': 'Juliette BBB',
-                'descricao': 'Mulher, Cantora, Empreendedora, Embaixador, Empoderada, Paraibana, LGBTQIA+, lutando pelo direitos de todos. Cuscuz salva vidas!',
-                'img': "https://s2.glbimg.com/WU3jadMzNrZMZyqLK24Ej-eV-7k=/0x0:1500x1500/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2021/K/3/ztZD9BQ06ifX4IAv46nA/juliette-chapeu.jpg"
-            },
-            {
-                'name': 'Francisco Pio',
-                'descricao': 'Professor, Assoviador, amo soninhos e já fui denunciado por piadas mal compreendidas. Luto pela comunidade escolar!',
-                'img': 'https://i.imgur.com/DMexgbj.jpg'
-            },
-            {
-                'name': 'Paulo Muzy',
-                'descricao': 'Maromba, peitudo, amo e vivo pela robertinha, vulgo minha vida, Lives matinais são a minha paixão, Vou lutar pela comunidade marombeira. Amo Creatina!',
-                "img": "https://www.pragmatismopolitico.com.br/wp-content/uploads/2022/07/paulo-muzy.png"
-            }, ],
-
+        'candidatos': candidatos
     }
     return HttpResponse(template.render(context, request))
 
@@ -91,12 +96,33 @@ def candidato(request):
     return HttpResponse(template.render(context, request))
 
 
-def computeVotes():
-    votosFile = open(path.join(settings.BASE_DIR, 'vote.txt'), 'r')
+def computeVotes(firstTurn=True):
+    votosFile = open(path.join(settings.BASE_DIR,
+                     'vote.txt' if firstTurn else 'vote2.text'), 'r')
     votos = votosFile.readlines()
     votosFile.close()
     votos = [voto.strip().split(' ')[1] for voto in votos]
-    votos = set(votos)
     votos = list(votos)
-    votos.sort()
-    return votos
+    numVotes = {
+        1: votos.count('1'),
+        2: votos.count('2'),
+        3: votos.count('3')
+    }
+    return numVotes
+
+
+def computeWinner(votes: "dict[int,int]"):
+    totalVotes = sum(list(votes.values()))
+    votesList = list(votes.values())
+    winner = 0
+    for pos, candidateVote in enumerate(votesList):
+        if candidateVote > totalVotes/2:
+            winner = pos
+            break
+    return winner
+
+
+def encerrar(request):
+    votes = computeVotes(not firstTurnEnded)
+
+    # return redirect('/')
