@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.http import HttpResponse
 from django.template import loader
+from django.shortcuts import redirect
 from os import path
 
 alunos = {"07340": "Allice Sales da silva",
@@ -57,10 +58,10 @@ def cadastro(request):
 def cadastrar(request):
     nome, rm = request.GET['nome'], request.GET['codigo']
     if rm in alunos.keys():
-        return HttpResponse('Aluno já cadastrado!')
+        return redirect('/cadastro?error=1')
     else:
         alunos[rm] = nome
-        return HttpResponse('Aluno cadastrado!')
+        return redirect('/')
 
 
 def votar(request):
