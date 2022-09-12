@@ -5,9 +5,19 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Document</title>
+        <style>
+            .erro {
+                color: red;
+            }
+        </style>
     </head>
     <body>
-        <h1>Cadastro</h1>
+        <h1 class="{{erro}}">{% if erro %}
+        Erro: Eleitor já cadastrado
+        {% else %}
+        Cadastrar
+        {% endif %}
+    </h1>
         <form action="/cadastrar">
             <label for="nome">Nome:</label>
             <input type="text" name="nome">

@@ -56,14 +56,18 @@ def index(request):
 
 
 def cadastro(request):
+    erro = request.GET['error'] if 'error' in request.GET.keys() else None
+    context = {
+        'erro': erro
+    }
     template = loader.get_template('cadastro.html')
-    return HttpResponse(template.render())
+    return HttpResponse(template.render(context, request))
 
 
 def cadastrar(request):
     nome, rm = request.GET['nome'], request.GET['codigo']
     if rm in alunos.keys():
-        return redirect('/cadastro?error=1')
+        return redirect('/cadastro?error=erro')
     else:
         alunos[rm] = nome
         return redirect('/')
