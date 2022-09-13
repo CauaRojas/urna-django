@@ -1,0 +1,29 @@
+.erro {
+    color: red;
+}
+html {
+    font-family: sans-serif;
+    text-align: center;
+}
+input {
+    width: 60%;
+    height: 2rem;
+    border-radius: 0.5rem;
+    border: 1px solid #000;
+    margin: 0.5rem 0;
+    font-size: 1.5rem;
+}
+label {
+    display: block;
+    font-size: 1.5rem;
+}
+button {
+    height: 2rem;
+    border-radius: 0.5rem;
+    border: 1px solid #000;
+    margin: 0.5rem 0;
+    font-size: 1.5rem;
+}
+a {
+    font-size: 1.2rem;
+}

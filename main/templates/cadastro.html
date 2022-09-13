@@ -4,12 +4,10 @@
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Document</title>
-        <style>
-            .erro {
-                color: red;
-            }
-        </style>
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'main/cadastro.css' %}" />
+        <title>Cadastrar</title>
+
     </head>
     <body>
         <h1 class="{{erro}}">{% if erro %}
@@ -19,12 +17,16 @@
         {% endif %}
     </h1>
         <form action="/cadastrar">
-            <label for="nome">Nome:</label>
-            <input type="text" name="nome">
-            </input>
-            <label for="codigo">codigo:
-            </label>
-            <input type="text" name="codigo">
+            <div>
+                <label for="nome">Nome:</label>
+                <input type="text" name="nome" id="nome">
+                </input>
+            </div>
+            <div>
+                <label for="codigo">Codigo:
+                </label>
+                <input type="text" name="codigo" id="codigo">
+            </div>
             <button type="submit">Enviar</button>
         </form>
         <a href="/">Retornar a votação</a>

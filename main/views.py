@@ -31,9 +31,9 @@ alunos = {"07340": "Allice Sales da silva",
 
 candidatos = [
     {
-        'name': 'Juliette BBB',
-                'descricao': 'Mulher, Cantora, Empreendedora, Embaixador, Empoderada, Paraibana, LGBTQIA+, lutando pelo direitos de todos. Cuscuz salva vidas!',
-                'img': "https://s2.glbimg.com/WU3jadMzNrZMZyqLK24Ej-eV-7k=/0x0:1500x1500/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2021/K/3/ztZD9BQ06ifX4IAv46nA/juliette-chapeu.jpg"
+        'name': 'Paulo Muzy',
+                'descricao': 'Maromba, peitudo, amo e vivo pela robertinha, vulgo minha vida, Lives matinais são a minha paixão, Vou lutar pela comunidade marombeira. Amo Creatina!',
+                "img": "https://www.pragmatismopolitico.com.br/wp-content/uploads/2022/07/paulo-muzy.png"
     },
     {
         'name': 'Francisco Pio',
@@ -41,10 +41,11 @@ candidatos = [
                 'img': 'https://i.imgur.com/DMexgbj.jpg'
     },
     {
-        'name': 'Paulo Muzy',
-                'descricao': 'Maromba, peitudo, amo e vivo pela robertinha, vulgo minha vida, Lives matinais são a minha paixão, Vou lutar pela comunidade marombeira. Amo Creatina!',
-                "img": "https://www.pragmatismopolitico.com.br/wp-content/uploads/2022/07/paulo-muzy.png"
-    }, ]
+        'name': 'Juliette BBB',
+                'descricao': 'Mulher, Cantora, Empreendedora, Embaixador, Empoderada, Paraibana, LGBTQIA+, lutando pelo direitos de todos. Cuscuz salva vidas!',
+                'img': "https://s2.glbimg.com/WU3jadMzNrZMZyqLK24Ej-eV-7k=/0x0:1500x1500/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2021/K/3/ztZD9BQ06ifX4IAv46nA/juliette-chapeu.jpg"
+    },
+]
 removedCandidates = []
 
 
