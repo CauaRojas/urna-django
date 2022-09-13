@@ -1,5 +1,9 @@
 html {
     font-family: sans-serif;
+    overflow-y: hidden;
+}
+body {
+    margin: 0;
 }
 .candidatos {
     width: 100%;
@@ -40,7 +44,7 @@ footer > button {
     font-size: 1.4rem;
 }
 .rmDiv > input {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
 }
 .popUp {
     position: fixed;

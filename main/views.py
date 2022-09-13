@@ -1,10 +1,10 @@
-from functools import reduce
+from multiprocessing import context
+from os import path
+
 from django.conf import settings
 from django.http import HttpResponse
+from django.shortcuts import redirect
 from django.template import loader
-from django.shortcuts import redirect
-from os import path
-from django.shortcuts import redirect
 
 firstTurnEnded = False
 
@@ -45,12 +45,16 @@ candidatos = [
                 'descricao': 'Maromba, peitudo, amo e vivo pela robertinha, vulgo minha vida, Lives matinais são a minha paixão, Vou lutar pela comunidade marombeira. Amo Creatina!',
                 "img": "https://www.pragmatismopolitico.com.br/wp-content/uploads/2022/07/paulo-muzy.png"
     }, ]
+removedCandidates = []
 
 
 def index(request):
+    print(removedCandidates)
     template = loader.get_template('index.html')
+    votableCandidates = [
+        candidato for candidato in candidatos if candidato not in removedCandidates]
     context = {
-        'candidatos': candidatos
+        'candidatos': votableCandidates
     }
     return HttpResponse(template.render(context, request))
 
@@ -75,10 +79,11 @@ def cadastrar(request):
 
 def votar(request):
     response = ''
+    fileVote = 'vote.txt' if not firstTurnEnded else 'vote2.txt'
     rm = request.GET['rm']
     voto = request.GET['vote']
     if rm in alunos.keys():
-        votosFile = open(path.join(settings.BASE_DIR, 'vote.txt'), 'r')
+        votosFile = open(path.join(settings.BASE_DIR, fileVote), 'r')
         votos = votosFile.readlines()
         for linha in votos:
             if rm in linha:
@@ -86,7 +91,7 @@ def votar(request):
                 break
         votosFile.close()
         if response == '':
-            votos = open(path.join(settings.BASE_DIR, 'vote.txt'), 'a')
+            votos = open(path.join(settings.BASE_DIR, fileVote), 'a')
             votos.write(rm + " " + voto + '\n')
             votos.close()
             response = 'Voto computado!'
@@ -103,7 +108,7 @@ def candidato(request):
 
 def computeVotes(firstTurn=True):
     votosFile = open(path.join(settings.BASE_DIR,
-                     'vote.txt' if firstTurn else 'vote2.text'), 'r')
+                     'vote.txt' if firstTurn else 'vote2.txt'), 'r')
     votos = votosFile.readlines()
     votosFile.close()
     votos = [voto.strip().split(' ')[1] for voto in votos]
@@ -118,16 +123,60 @@ def computeVotes(firstTurn=True):
 
 def computeWinner(votes: "dict[int,int]"):
     totalVotes = sum(list(votes.values()))
+
+    def itNeedsSecondTurn():
+        return not (votes[1] > totalVotes / 2 or votes[2] > totalVotes / 2 or votes[3] > totalVotes / 2)
     votesList = list(votes.values())
-    winner = 0
-    for pos, candidateVote in enumerate(votesList):
-        if candidateVote > totalVotes/2:
-            winner = pos
-            break
+    winner = -1
+    print(votesList, itNeedsSecondTurn())
+    if not itNeedsSecondTurn():
+        winner = max(votes, key=votes.get)
+    else:
+        winner = dict(
+            sorted(votes.items(), key=lambda item: item[1], reverse=True))
+        winner.popitem()
+        # winner = sorted(votes, key=votes.get)[0:2]
     return winner
 
 
 def encerrar(request):
+    global firstTurnEnded
     votes = computeVotes(not firstTurnEnded)
+    winner = computeWinner(votes)
+    if winner == 0:
+        return redirect('/empate')
+    elif winner == -1:
+        return redirect('/empate?error=erro')
+    elif type(winner) == dict:
+        print(winner)
+        cand1, cand2 = winner.keys()
+        cand1, cand2 = candidatos[cand1-1], candidatos[cand2-1]
+        for candidato in candidatos:
+            if cand1['name'] != candidato['name'] and cand2['name'] != candidato['name']:
+                removedCandidates.append(candidato)
+        firstTurnEnded = True
+        return redirect('/')
+    elif type(winner) == int:
+        candidates = dict(
+            sorted(votes.items(), key=lambda item: item[1], reverse=True))
+        candidates.pop(winner)
+        return redirect('/vencedor?primeiro='+candidatos[winner-1]['name']+"&segundo="+candidatos[list(candidates.keys())[0] - 1]['name'])
 
-    # return redirect('/')
+
+def vencedor(request):
+    primeiro, segundo = request.GET['primeiro'], request.GET['segundo']
+    terceiro = ''
+    for candidato in candidatos:
+        if candidato['name'] != primeiro and candidato['name'] != segundo:
+            terceiro = candidato['name']
+    for candidato in candidatos:
+        if candidato['name'] == primeiro:
+            primeiro = candidato
+        elif candidato['name'] == segundo:
+            segundo = candidato
+        elif candidato['name'] == terceiro:
+            terceiro = candidato
+    context = {
+        'candidatos': [primeiro, segundo, terceiro]}
+    template = loader.get_template('vencedor.html')
+    return HttpResponse(template.render(context, request))

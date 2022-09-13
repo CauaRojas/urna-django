@@ -1,5 +1,8 @@
 async function votar(num, rm) {
-    createPopUp(await (await fetch('/votar?vote=' + num + '&rm=' + rm)).text());
+    createPopUp(
+        await (await fetch('/votar?vote=' + num + '&rm=' + rm)).text(),
+        800
+    );
 }
 function cadastro() {
     window.location.href = '/cadastro';
@@ -14,8 +17,8 @@ function createPopUp(msg, time = 2000) {
     }, time);
 }
 function pedirRm(voto) {
-    if (rmInput.value) votar(voto, rmInput.value);
-    else createPopUp('Preencha o campo Codigo', 1500);
+    if (rmInput.value && rmInput.value.length == 5) votar(voto, rmInput.value);
+    else createPopUp('Codigo Inválido', 800);
     rmInput.value = '';
 }
 function encerrar() {
