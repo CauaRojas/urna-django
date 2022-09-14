@@ -33,17 +33,20 @@ candidatos = [
     {
         'name': 'Paulo Muzy',
                 'descricao': 'Maromba, peitudo, amo e vivo pela robertinha, vulgo minha vida, Lives matinais são a minha paixão, Vou lutar pela comunidade marombeira. Amo Creatina!',
-                "img": "https://www.pragmatismopolitico.com.br/wp-content/uploads/2022/07/paulo-muzy.png"
+                "img": "https://www.pragmatismopolitico.com.br/wp-content/uploads/2022/07/paulo-muzy.png",
+                "num": 1
     },
     {
         'name': 'Francisco Pio',
                 'descricao': 'Professor, Assoviador, amo soninhos e já fui denunciado por piadas mal compreendidas. Luto pela comunidade escolar!',
-                'img': 'https://i.imgur.com/DMexgbj.jpg'
+                'img': 'https://i.imgur.com/DMexgbj.jpg',
+                "num": 2
     },
     {
         'name': 'Juliette BBB',
                 'descricao': 'Mulher, Cantora, Empreendedora, Embaixador, Empoderada, Paraibana, LGBTQIA+, lutando pelo direitos de todos. Cuscuz salva vidas!',
-                'img': "https://s2.glbimg.com/WU3jadMzNrZMZyqLK24Ej-eV-7k=/0x0:1500x1500/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2021/K/3/ztZD9BQ06ifX4IAv46nA/juliette-chapeu.jpg"
+                'img': "https://s2.glbimg.com/WU3jadMzNrZMZyqLK24Ej-eV-7k=/0x0:1500x1500/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2021/K/3/ztZD9BQ06ifX4IAv46nA/juliette-chapeu.jpg",
+                "num": 3
     },
 ]
 removedCandidates = []
@@ -132,6 +135,10 @@ def computeWinner(votes: "dict[int,int]"):
     print(votesList, itNeedsSecondTurn())
     if not itNeedsSecondTurn():
         winner = max(votes, key=votes.get)
+        if firstTurnEnded:
+            votes.pop(removedCandidates[0]['num'])
+            votes.pop(winner)
+            winner = winner, max(votes, key=votes.get)
     else:
         winner = dict(
             sorted(votes.items(), key=lambda item: item[1], reverse=True))
@@ -157,11 +164,13 @@ def encerrar(request):
                 removedCandidates.append(candidato)
         firstTurnEnded = True
         return redirect('/')
+    elif type(winner) == tuple:
+        winner, secondWinner = winner
+        return redirect('/vencedor?primeiro='+candidatos[winner-1]['name']+"&segundo="+candidatos[secondWinner - 1]['name'])
     elif type(winner) == int:
-        candidates = dict(
-            sorted(votes.items(), key=lambda item: item[1], reverse=True))
-        candidates.pop(winner)
-        return redirect('/vencedor?primeiro='+candidatos[winner-1]['name']+"&segundo="+candidatos[list(candidates.keys())[0] - 1]['name'])
+        votes.pop(winner)
+        secondWinner = max(votes, key=votes.get)
+        return redirect('/vencedor?primeiro='+candidatos[winner-1]['name']+"&segundo="+candidatos[secondWinner - 1]['name'])
 
 
 def vencedor(request):

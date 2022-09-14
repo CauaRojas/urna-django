@@ -23,7 +23,7 @@
                     <img src="{{candidato.img}}" alt="{{candidato.name}}" />
                     <h3>{{candidato.name}}</h3>
                     <p>{{candidato.descricao}}</p>
-                    <button id="{{ forloop.counter }}">Votar</button>
+                    <button id="{{ candidato.num }}">Votar</button>
                 </div>
                 {% endfor %}
             </div>
