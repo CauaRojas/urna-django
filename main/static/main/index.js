@@ -1,7 +1,7 @@
 async function votar(num, rm) {
     createPopUp(
         await (await fetch('/votar?vote=' + num + '&rm=' + rm)).text(),
-        800
+        1200
     );
 }
 function cadastro() {

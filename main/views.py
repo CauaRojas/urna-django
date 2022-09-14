@@ -98,7 +98,7 @@ def votar(request):
             votos = open(path.join(settings.BASE_DIR, fileVote), 'a')
             votos.write(rm + " " + voto + '\n')
             votos.close()
-            response = 'Voto computado!'
+            response = f'Voto computado {alunos[rm]}!'
     return HttpResponse(response or 'Aluno não cadastrado!')
 
 
